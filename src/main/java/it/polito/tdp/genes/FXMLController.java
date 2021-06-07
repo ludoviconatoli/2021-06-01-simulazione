@@ -55,6 +55,11 @@ public class FXMLController {
     	this.cmbGeni.getItems().addAll(model.getEssentialGenes());
     	
     	txtResult.appendText(msg);
+    	
+    	btnGeniAdiacenti.setDisable(false);
+        btnSimula.setDisable(false);
+        cmbGeni.setDisable(false);
+        txtIng.setDisable(false);
     }
 
     @FXML
@@ -81,14 +86,27 @@ public class FXMLController {
 
     @FXML
     void doSimula(ActionEvent event) {
+    	
     	Genes start = this.cmbGeni.getValue();
-    	int n = Integer.parseInt(txtIng.getText());
+    	if(start==null) {
+    		txtResult.appendText("ERRORE: scegliere un gene\n");
+    		return ;
+    	}
+    	
+    	int n ;
+    	try {
+    		n = Integer.parseInt(txtIng.getText()) ;
+    	} catch(NumberFormatException ex) {
+    		txtResult.appendText("ERRORE: numero di ingegneri è obbligatorio e deve essere un numero\n");
+    		return ;
+    	}
     	
     	Map<Genes, Integer> studiati = model.simulaIngegneri(start, n);
     	
     	if(studiati == null) {
     		this.txtResult.appendText("ERRORE: il gene selezionato è isolato \n");
     	}else {
+    		txtResult.appendText("Risultato simulazione\n");
     		for(Genes g: studiati.keySet()) {
     			this.txtResult.appendText(g + " " + studiati.get(g) +"\n");
     		}
@@ -104,6 +122,11 @@ public class FXMLController {
         assert btnSimula != null : "fx:id=\"btnSimula\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
 
+        btnGeniAdiacenti.setDisable(true);
+        btnSimula.setDisable(true);
+        cmbGeni.setDisable(true);
+        txtIng.setDisable(true);
+        txtResult.setDisable(true);
     }
     
     public void setModel(Model model) {

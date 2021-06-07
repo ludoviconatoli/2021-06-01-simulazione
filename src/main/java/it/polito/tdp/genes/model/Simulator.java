@@ -33,7 +33,7 @@ public class Simulator {
 		//inizializzo coda
 		this.queue = new PriorityQueue<>();
 		for(int nIng = 0; nIng < this.nTotIng; nIng++) {
-			this.queue.add(new Event(0, n));
+			this.queue.add(new Event(0, nIng));
 		}
 		
 		//inizializzo mondo, creando un array con nTotIng valori pari a startGene
