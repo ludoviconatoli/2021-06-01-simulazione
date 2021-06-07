@@ -5,8 +5,11 @@
 package it.polito.tdp.genes;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.genes.model.Adiacente;
 import it.polito.tdp.genes.model.Genes;
 import it.polito.tdp.genes.model.Model;
 import javafx.event.ActionEvent;
@@ -30,7 +33,7 @@ public class FXMLController {
     private Button btnCreaGrafo; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGeni"
-    private ComboBox<?> cmbGeni; // Value injected by FXMLLoader
+    private ComboBox<Genes> cmbGeni; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnGeniAdiacenti"
     private Button btnGeniAdiacenti; // Value injected by FXMLLoader
@@ -46,19 +49,50 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    	
+    	String msg = model.creaGrafo();
 
+    	this.cmbGeni.getItems().clear();
+    	this.cmbGeni.getItems().addAll(model.getEssentialGenes());
+    	
+    	txtResult.appendText(msg);
     }
 
     @FXML
     void doGeniAdiacenti(ActionEvent event) {
-
+    	
+    	Genes g = cmbGeni.getValue();
+    	
+    	if(g == null) {
+    		this.txtResult.appendText("ERRORE: scegliere un gene\n");
+    		return;
+    	}
+    	
+    	List<Adiacente> adiacenti = model.getGeniAdiacenti(g);
+    	this.txtResult.appendText("Geni adiacenti a " + g + ":\n");
+    	if(adiacenti.size() == 0) {
+    		this.txtResult.appendText("NESSUNO\n");
+    	}else {
+    		for(Adiacente a: adiacenti) {
+    			this.txtResult.appendText(a.getGene() + " " + a.getPeso() +"\n");
+    		}
+    	}
     	
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	Genes start = this.cmbGeni.getValue();
+    	int n = Integer.parseInt(txtIng.getText());
+    	
+    	Map<Genes, Integer> studiati = model.simulaIngegneri(start, n);
+    	
+    	if(studiati == null) {
+    		this.txtResult.appendText("ERRORE: il gene selezionato è isolato \n");
+    	}else {
+    		for(Genes g: studiati.keySet()) {
+    			this.txtResult.appendText(g + " " + studiati.get(g) +"\n");
+    		}
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
